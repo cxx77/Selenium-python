@@ -1,0 +1,347 @@
+输入字符和点击按钮这样的操作：用send_keys()来输入字符串到文本输入框这样的页面元素，用click()来点击页面上支持点击的元素。
+清除一个文本输入框内的文字，然后重新输入新的字符串，那边清除这个方法如何实现呢。
+调用webdriever中clear()方法：
+code：
+        from selenium import webdriver
+
+        driver = webdriver.Chrome(）
+
+        driver.get("https://www.baidu.com")
+        driver.maximize_window()
+        driver.implicitly_wait(6)
+        driver.find_element_by_id("kw").send_keys("Selenium")
+        
+        try:
+            driver.find_element_by_id("kw").clear() # 调用clear()方法去清除
+            driver.refresh()   #刷新页面的方法
+            print ('test pass: clean successful')
+        except Exception as e:
+            print ("Exception found", format(e))
+            
+        #浏览器的前进和后退
+        elem_news = driver.find_element_by_link_text("新闻")  
+        elem_news.click() # 点击进入到百度新闻
+        time.sleep(2)
+        print (driver.title)  # title方法可以获取当前页面的标题显示的字段
+        print (driver.current_url)  # current_url 方法可以得到当前页面的URL,判断当前的跳转是否正确
+        
+        time.sleep(2)
+        driver.back()  # 从百度新闻后退到百度首页
+        time.sleep(2)
+        driver.forward() # 百度首页前进到百度新闻
+        time.sleep(2)
+
+        print(driver.capabilities['version'])  # 打印浏览器version的值；发送自动化测试报告的时候，还是可以通过这个方法来告诉别人，执行过的脚本是通过什么浏览器，什么版本跑的。
+
+        driver.quit()
+
+
+在浏览器中新开一个tag
+介绍如selenium方法打开一个新的tab，我们知道在浏览器里，我们按住 ctrl+ t 就可以新打开一个tab。
+所以我们学习如何利用webdriver中send_key 的方法去触发ctrl+t的效果。
+code：
+        import time
+        from selenium import webdriver
+        from selenium.webdriver.common.keys import Keys
+
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.implicitly_wait(10)
+
+        driver.get("http://www.baidu.com")
+        time.sleep(2)
+        ele = driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + "t")
+        time.sleep(2)
+    
+    
+利用selenium中的方法去操作单选按钮（Radio Button）。
+利用百度新闻页面两个单选按钮举例
+code：
+        from selenium import webdriver
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.get("http://www.baidu.com")
+        driver.implicitly_wait(10)
+        driver.find_element_by_link_text("新闻").click()
+        radios = driver.find_elements_by_xpath("//*/input[@type='radio']")
+        for i in range(0,10):
+            for radio in radios:
+                radio.click()
+    
+操作复选框-Checkbox，最终的方法还是click()。
+for语句来把所有的复选框勾选一遍，例如这样的场景：注册一个网站勾选身份或者职业的时候。
+code：
+        from selenium import webdriver
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.get("http://www.baidu.com")
+        driver.implicitly_wait(10)
+        #driver.find_element_by_link_text("登录").click()
+        #driver.find_element_by_xpath("//*[@id='u1]/a[7]").click()
+        driver.find_element_by_xpath("//*[@id='u1']/a[7]").click()
+
+        driver.find_element_by_id("TANGRAM__PSP_10__footerULoginBtn").click()
+        for i in range(0,30):
+            driver.find_element_by_xpath("//*/input[@type='checkbox']").click()
+            if driver.find_element_by_xpath("//*/input[@type='checkbox']").is_selected():
+                driver.find_element_by_xpath("//*/input[@type='checkbox']").click()
+      
+      
+设置符合不同测试场景浏览器窗口大小。
+例如，你有一台机器，最大支持1366*768，你完全可以利用这个机器测试不同分辨率下的场景。
+code:
+        import time
+        from selenium import webdriver
+
+        driver = webdriver.Chrome()
+        driver.maximize_window()        # 全屏
+        driver.get('https://www.baidu.com')
+        time.sleep(1)
+        print (driver.get_window_size())
+
+        driver.set_window_size(1280,800)  # 分辨率 1280*800
+        time.sleep(1)
+        print (driver.get_window_size()) 
+
+        driver.set_window_size(1024,768)  # 分辨率 1024*768
+        time.sleep(1)
+        print (driver.get_window_size())
+
+
+介绍一个Selenium中页面title断言方法
+u代表unicode的意思，由于我们这里采用了python 2, 如果你使用pyn3 就不需要，在Python3中，字符串默认采用unicode存储。
+code:
+        import time
+        from selenium import webdriver
+
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.get('https://www.baidu.com')
+        time.sleep(1)
+        # 方法一
+        try:
+            assert u"百度一下" in driver.title
+            print ('Assertion test pass.')
+        except Exception as e:
+            print ('Assertion test fail.', format(e))
+        # 方法二
+        if u"百度一下，你就知道" == driver.title :
+            print ('Assertion test pass.')
+        else:
+            print ('Assertion test fail.')
+        print(driver.title)
+ 
+ 
+介绍如何通过Selenium方法来获取某一个元素的text属性值。
+在很多自动化测试脚本中，需要多次获取元素的text值，拿过来进行对比和匹配。
+例如，在一个登陆界面，如果不输入用户名和密码，直接点击登录，肯定会有相关错误提醒。
+这个错误，我们需要通过selenium抓取出来，和需求说明文档中的描述去进行匹配，如果匹配，测试成功，否则失败。
+code:
+        import time
+        from selenium import webdriver
+        from selenium.webdriver.common.keys import Keys
+
+        driver = webdriver.Chrome()
+
+        driver.get("http://www.baidu.com/")
+        driver.maximize_window()
+        driver.implicitly_wait(6)
+
+        time.sleep(1)
+        driver.find_element_by_xpath("//*[@id='u1']/a[7]").click()
+        time.sleep(1)
+        driver.find_element_by_xpath("//*[@id='TANGRAM__PSP_10__footerULoginBtn']").click()
+        time.sleep(1)
+        #driver.find_element_by_xpath("//*[@id='TANGRAM__PSP_10__footerQrcodeBtn']").click()
+        time.sleep(1)
+        driver.find_element_by_xpath("//*/input[@id='TANGRAM__PSP_10__submit']").click()
+        err_message = driver.find_element_by_xpath("//*[@id='TANGRAM__PSP_10__error']").text
+        try:
+            err_message == "请您填写手机/邮箱/用户名"
+            #error_message = driver.find_element_by_xpath("//*[@id='TANGRAM__PSP_8__error' and text()='请您填写手机/邮箱/用户名']").is_displayed()
+            print("Test passed.")
+        except Exception as e:
+            print("Test failed:", format(e))
+
+
+获取元素的text属性值，和判断元素是否显示在页面（is_displayed()方法）；学习下判断一个控件是否被选中状态
+元素方法is_selected()返回是是布尔值，用来判断单选或者多选控件是否被选中，或者下拉选择菜单是否选择一个默认的option，都可以通过这个方法去判断。
+code:
+        import time
+        from selenium import webdriver
+
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.implicitly_wait(6)
+        driver.get("http://news.baidu.com/")
+        time.sleep(1)
+        
+        #取页面元素的大小  {'width': 100.0, 'height': 36.0}
+        search_btn = driver.find_element_by_id('su')
+        print (search_btn.size)
+
+        try:
+            driver.find_element_by_xpath("//*/input[@id='news']").is_selected()
+            print("Test passed")
+        except Exception as e:
+            print("Test failed.", format(e))
+            
+          
+全选当前页面文字，快捷键是 Ctrl+a，主要还是用send_keys()方法输入组合键，这里用百度首页举例。
+code:
+          # coding=utf-8
+          import time
+          from selenium import webdriver
+          from selenium.webdriver.common.keys import Keys
+
+          driver = webdriver.Chrome()
+          driver.maximize_window()
+          driver.get('https://www.baidu.com')
+
+          element = driver.find_element_by_tag_name('body')
+          element.send_keys(Keys.CONTROL + 'a')
+
+
+常规清除文本输入框字符的方法clear()
+code:
+          from selenium import webdriver
+          from selenium.webdriver.common.keys import Keys
+
+          driver = webdriver.Chrome()
+          driver.get("http://baidu.com")
+          driver.maximize_window()
+
+          element = driver.find_element_by_id("kw")
+          element.send_keys("selenium automation")
+          time.sleep(3)
+
+          #element.clear()
+          element.send_keys(Keys.CONTROL + 'a')
+          element.send_keys(Keys.BACKSPACE)
+          
+ 
+使用Selenium中右键方法来操作网页元素。
+网页上有些元素是支持右键来触发新的菜单，这里找一个百度首页，百度logo的右键，查看图片动作来模拟这个场景。
+
+问题拆分：
+1. 打开百度首页，找到logo，右键鼠标
+2. 移动到菜单，查看图像，然后点击
+核心问题，如何右键操作，然后是如何选择查看图像这个菜单。
+在Selenium中，有一个ActionChains模块支持，右键，鼠标悬停，拖拽，双击等动作。
+我们可以通过键盘向下箭头来选择查看图像这个菜单，然后点击就可以达到目的。
+code:
+        import time
+        from selenium import webdriver
+        from selenium.webdriver import ActionChains
+        from selenium.webdriver.common.keys import Keys
+
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.get("http://baidu.com")
+        time.sleep(2)
+
+        element = driver.find_element_by_xpath("//*[@id='lg']/img")
+        actionchains = ActionChains(driver)
+        actionchains.context_click(element).send_keys(Keys.ARROW_DOWN).send_keys(Keys.ENTER).perform()
+
+
+执行JS脚本
+code:
+        # coding=utf-8
+        import time
+        from selenium import webdriver
+
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.implicitly_wait(6)
+        driver.get("https://www.baidu.com")
+        time.sleep(1)
+
+        driver.execute_script("window.alert('这是一个alert弹框。');") # 注意这里的分号是英文输入法的分号，不能用中文
+        
+ 执行js脚本来控制浏览器竖向滚动条      
+ code:
+         # coding=utf-8
+        import time
+        from selenium import webdriver
+
+
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.implicitly_wait(6)
+        driver.get("https://tieba.baidu.com/index.html")
+        time.sleep(1)
+
+        target_elem = driver.find_element_by_link_text("地区")
+        driver.execute_script("return arguments[0].scrollIntoView();",target_elem) # 用目标元素参考去拖动
+        #driver.execute_script("scroll(0,2400)") # 这个是第二种方法，比较粗劣，大概的拖动
+        
+        
+介绍selenium中switch_to.window()方法处理driver在多窗口之间切换
+打开百度新闻（页面A），点击热点新闻中第一个新闻链接（一般是国家领导人的新闻），会在第二个窗口打开这个新闻的具体详情页（页面B），测试需要去判断你点击这个这个新闻，在打开的详情页是否正确。
+问题拆分：
+
+1. 我们已经知道switch_to.window()方法可以处理窗口切换的问题
+
+2. 在页面A跳转到页面B之前，我们需要用一个变量保存这个新闻的标题
+
+3. 切换到页面B后，我们获取这个新闻标题，然后和前面这个变量保存的值去对比，如果相等，那么就测试通过。
+
+我们分两个步骤去解答这个测试需求：
+
+1. 先实现页面A切换到页面B
+
+2. 页面A和页面B两个新闻标题进行对比
+
+code:
+        import time
+        from selenium import webdriver
+
+
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.get('http://news.baidu.com')
+        time.sleep(1)
+
+        news = driver.find_element_by_xpath("//*[@id='pane-news']/div/ul/li[1]/strong/a")
+        news.click()
+        print(driver.current_window_handle)
+
+        handles = driver.window_handles
+        for handle in handles:
+            print(handle)
+            if handle != driver.current_window_handle:
+                print("switch to second handle:", handle)
+                driver.close()
+                driver.switch_to.window(handle)
+
+code:
+        # coding=utf-8
+        import time
+        from selenium import webdriver
+
+
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.get('http://news.baidu.com')
+        time.sleep(1)
+
+        news_link = driver.find_element_by_xpath("//*[@id='pane-news']/div/ul/li[1]/strong/a")
+        page1_title_string = news_link.text #得到页面A新闻标题
+        news_link.click() # 点击新闻链接
+        time.sleep(1)
+        handles = driver.window_handles
+
+        for handle in handles:# 切换窗口（切换到搜狗）
+            if handle != driver.current_window_handle:
+                print 'switch to second window',handle
+                driver.close() # 关闭第一个窗口
+                driver.switch_to.window(handle) #切换到第二个窗口
+        page2_title_string = driver.find_element_by_xpath("//*[@id='yc_con_txt']/p[1]").text # 详情页有一个原标题
+
+        try :
+            assert page1_title_string in page2_title_string # 判断页面B标题是否包含页面A标题
+            print ('Test Pass.')
+        except Exception as e:
+            print ('Test Fail')
+
