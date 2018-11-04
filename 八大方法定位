@@ -1,0 +1,178 @@
+# coding=utf-8
+import time
+from selenium import webdriver
+ 
+driver = webdriver.Chrome() # 打开chrome，如果没有安装chrome,换成webdriver.Firefox()
+driver.maximize_window()    # 最大化浏览器窗口
+driver.implicitly_wait(8)   # 设置隐式时间等待
+ 
+driver.get("https://www.baidu.com")  # 地址栏输入百度地址
+driver.find_element_by_xpath("//*[@id='kw']").send_keys("selenium")  # 搜索输入框输入Selenium
+driver.find_element_by_xpath("//*[@id='su']").click()  #点击百度一下按钮
+ 
+# 导入time模块，等待2秒
+ 
+time.sleep(2) 
+# 这里通过元素XPath表达式来确定该元素显示在结果列表，从而判断Selenium官网这个链接显示在结果列表。
+# 这里采用了相对元素定位方法/../
+# 通过selenium方法is_displayed() 来判断我们的目标元素是否在页面显示。
+driver.find_element_by_xpath("//div/h3/a[text()='官网']/../a/em[text()='Selenium']").is_displayed()
+driver.quit()
+
+
+# coding=utf-8
+import time
+from selenium import webdriver
+ 
+driver = webdriver.Chrome()
+driver.maximize_window()
+driver.implicitly_wait(8)
+ 
+driver.get("https://www.baidu.com")
+driver.find_element_by_xpath("//*[@id='kw']").send_keys("selenium")
+driver.find_element_by_xpath("//*[@id='su']").click()
+ 
+time.sleep(2)
+# 第二个判断方法
+ele_string = driver.find_element_by_xpath("//div/h3/a[text()='官网']/../a").text
+if (ele_string == u"Selenium - Web Browser Automation"):
+    print "测试成功，结果和预期结果匹配！"
+driver.quit()
+
+
+
+#练习场景：在某一个网页上有些字段是我们感兴趣的，我们希望摘取出来，进行其他操作。
+#但是这些字段可能在一个网页的不同地方。例如，我们需要在关于百度页面-联系我们，摘取全部的邮箱。
+
+1. 首先，需要得到当前页面的source内容，就像，打开一个页面，右键-查看页面源代码。
+
+2. 找出规律，通过正则表达式去摘取匹配的字段，存储到一个字典或者列表。
+
+3. 循环打印字典或列表中内容，Python中用 for 语句实现。
+
+技术角度实现相关方法：
+
+1. 查看页面的源代码，在Selenium中有driver.page_source 这个方法得到
+
+2. Python中利用正则，需要导入re模块
+
+3. for email in emails :
+
+          print email
+
+code:
+        from selenium import webdriver
+        import re
+
+        driver = webdriver.Chrome()
+
+        driver.get("https://www.sina.com.cn/contactus.html")
+        driver.maximize_window()
+        driver.implicitly_wait(10)
+        doc = driver.page_source
+
+        emails = re.findall(r'[\w]+@[\w\.-]+', doc)  # 利用正则，找出 xxx@xxx.xxx 的字段，保存到emails列表
+        for email in emails:
+            print(email)
+
+在定位中也可以使用find_element_by_id查找，但是并不是很常用
+code:
+        from selenium import webdriver
+        driver = webdriver.Chrome()
+        driver.get("http://www.baidu.com")
+        driver.maximize_window()
+        driver.implicitly_wait(10)
+        
+        try:
+            driver.find_element_by_id("kw")
+            print("test pass: ID founded")
+        except Exception as e:
+            print("Exception founded:", format(e))#处理异常
+         
+         driver.quit()
+  
+凡是看到链接元素上面有文字描述的都可以采取find_element_by_link_text（）方法来进行元素定位。
+这里提一下前面XPath定位中的知识，通过text()这个XPath中的函数也可以达到类似link text定位的目的。
+“新闻”链接元素的XPath表达式可以这样写：//*/div[@id='u1']/a[text()='新闻']
+
+code:
+        from selenium import webdriver
+        driver = webdriver.Chrome()
+
+        driver.get("https://www.baidu.com")
+        driver.maximize_window()
+        driver.implicitly_wait(6)
+        
+        try:
+            driver.find_element_by_link_text("新闻")
+            print ('test pass: element found by link text')
+        except Exception as e:
+            print ("Exception found", format(e))
+
+        driver.quit()
+
+
+很多情况下，class利用要比id多，如果class中出现了太长的字符，和可变化的数字，那么请回到用XPath定位方法。
+code:
+        from selenium import webdriver 
+        driver = webdriver.Chrome()
+
+        driver.get("https://www.baidu.com")
+        driver.maximize_window()
+        driver.implicitly_wait(6)
+
+        try:
+            driver.find_element_by_class_name("s_ipt")
+            print ('test pass: element found by class name')
+        except Exception as e:
+            print ("Exception found", format(e))
+
+        driver.quit()
+       
+ 通过节点中name的值来定位这个web元素。还是来看百度首页搜索输入框，通过name的值来定位。
+ name这个属性不是所有的节点都有，如果有建议采用name的值来定位，就和by_id, by_class一样的效果。
+ code:
+        from selenium import webdriver
+        driver = webdriver.Chrome()
+
+        driver.get("https://www.baidu.com")
+        driver.maximize_window()
+        driver.implicitly_wait(6)
+        
+        try:
+            driver.find_element_by_name("wd")  # 这里百度搜索输入框有name = 'wd'这个节点信息
+            print ('test pass: element found by name value')
+        except Exception as e:
+            print ("Exception found", format(e))
+
+        driver.quit()
+  
+  
+XPath, id , class , link text, partial link text, tag name, name 七大元素定位方法；
+本文介绍webdriver支持的最后一个方法：by_css。
+css和XPath类似，也需要掌握一些语法，才能写出正确的，完整的css选择表达式。
+相关w3c介绍，请点击：http://www.w3school.com.cn/cssref/css_selectors.asp
+        .class	 .intro	        选择 class="intro" 的所有元素。	
+        #id	  #firstname	选择 id="firstname" 的所有元素。	
+        *	  *	        选择所有元素。
+code：
+        from selenium import webdriver
+        driver = webdriver.Chrome()
+
+        driver.get("https://www.baidu.com")
+        driver.maximize_window()
+        driver.implicitly_wait(6)
+        
+        try:
+            driver.find_element_by_css_selector("#su") # 找 百度一下 这个按钮  id = "su"
+            print ('test pass: element found by css selector')
+        except Exception as e:
+            print ("Exception found", format(e))
+
+        driver.quit()
+
+总结：如果一开始没有接触css，感觉写css表达式有点困难，没关系。
+看个人喜好和适合哪个，例如，如果你掌握好了XPath的写法，那么就可以不去管css，毕竟大部分xpath表达式都能够定位到元素。
+
+建议：一定要掌握好XPath或者css来定位元素，其他的几种了解就可以。
+毕竟在实际项目开发脚本阶段，很多元素是无法通过id ,css, text, name来直接定位这个网页元素，更多的还是根据XPath或者css表达式去定位。
