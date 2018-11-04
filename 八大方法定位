@@ -153,8 +153,8 @@ XPath, id , class , link text, partial link text, tag name, name 七大元素定
 css和XPath类似，也需要掌握一些语法，才能写出正确的，完整的css选择表达式。
 相关w3c介绍，请点击：http://www.w3school.com.cn/cssref/css_selectors.asp
         .class	 .intro	        选择 class="intro" 的所有元素。	
-        #id	  #firstname	选择 id="firstname" 的所有元素。	
-        *	  *	        选择所有元素。
+        #id	     #firstname	    选择 id="firstname" 的所有元素。	
+        *	     *	            选择所有元素。
 code：
         from selenium import webdriver
         driver = webdriver.Chrome()
