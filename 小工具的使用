@@ -337,11 +337,27 @@ code:
                 print 'switch to second window',handle
                 driver.close() # 关闭第一个窗口
                 driver.switch_to.window(handle) #切换到第二个窗口
-        page2_title_string = driver.find_element_by_xpath("//*[@id='yc_con_txt']/p[1]").text # 详情页有一个原标题
+        page2_title_string = driver.find_element_by_xpath("html/body/div[7]/div[3]/div[1]/h1").text # 详情页有一个原标题
 
         try :
             assert page1_title_string in page2_title_string # 判断页面B标题是否包含页面A标题
             print ('Test Pass.')
         except Exception as e:
             print ('Test Fail')
+
+
+利用Selenium的方法进行截图，在测试过程中，是有必要截图，特别是遇到错误的时候进行截图。
+在selenium for python中主要有三个截图方法，我们挑选其中最常用的一种。
+code:
+        import time
+        from selenium import webdriver
+
+        driver = webdriver.Chrome()
+        driver.maximize_window()
+        driver.implicitly_wait(6)
+        driver.get("https://www.baidu.com")
+        time.sleep(1)
+
+        driver.get_screenshot_as_file("C:\\Users\\Administrator\\Desktop\\baidu.png")
+        driver.quit()
 
