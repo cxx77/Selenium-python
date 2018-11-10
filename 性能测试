@@ -1,0 +1,187 @@
+说起性能测试，很多人第一个反应就是Loadrunner；
+由于软件工具成本问题，我们有时候会放弃用Loadrunner去做性能测试，大家都喜欢用开源的工具，所以，很多公司的招聘简历，都有会使用Loadrunner和Jemeter做性能测试。
+什么是JMeter？JMeter就是一个源代码百分百是Java开发的一个开源软件，它可以做压力和性能测试，也可以做功能和接口测试，主要还是在性能测试这块比较受欢迎。
+
+JMeter安装过程。
+
+1. 下载JMeter，到网站http://jmeter.apache.org/download_jmeter.cgi 去点击windows版本的zip下载版，最新3.2版本，需要JDK 1.8以上。
+
+2. 安装JMeter，下载后解压zip包，解压出来发现不用安装，把这个文件放到一个位置，例如我放C盘根目录。
+
+3. 启动JMeter，到C:\apache-jmeter-3.2\bin路径下，点击jmeter.bat文件，开始启动Jmeter.
+
+
+
+
+
+在使用JMeter之前，需要搞懂下面这几个概念，这对JMeter的使用是非常重要的。 
+Test Plan 
+Thread Group 
+Controllers 
+Listeners 
+Timers 
+Assertions等 … …
+
+1. Test Plan
+    Test Plan也就是测试计划，概念有点类似eclipse里面的project（项目、工程）。 
+    一个JMeter测试计划有很多种测试元素组成。
+    一般至少包含一个Thread Group（线程组），在每个Thread Group里面又可以包含Controller，Listener，Timer等等。 
+
+2. Thread Group
+    Thread Group就是线程组,，可以看做一个虚拟用户组，线程组中的每个线程都可以理解为一个虚拟用户。
+    线程组中包含的线程数量在测试执行过程中是不会发生改变的。
+
+3. Controllers
+    JMeter主要有两种类型的Controllers，Samplers和Logic Controllers。 
+    Samplers： 
+    Samplers允许JMeter向server发送一系列的请求。
+    她模拟了用户从页面向终端server发送请求的行为，比如新建一个HTTP的Sampler，可执行POST、GET、DELETE等请求。 
+    一些常用的samplers主要有一下几种：
+        - HTTP Request 
+        - FTP Request 
+        - JDBC Request 
+        - Java Request 
+        - SOAP/XML Request 
+        - RPC Request
+
+    Logic Controllers： 
+    Logic Controllers其实最主要的作用就是控制执行顺序。
+    她可以用来控制sampler在一个线程中的执行顺序，也可以改变来自其他elements请求的顺序。典型的代表就是，IF Controller、While Controller等。 
+    一些常用的Logic Controllers主要有一下几种：
+        Simple Controller
+        Loop Controller
+        Once Only Controller
+        Interleave Controller
+        Random Controller
+        Random Order Controller
+        Throughput Controller
+        Runtime Controller
+        If Controller
+        While Controller
+        Switch Controller
+        ForEach Controller
+        Module Controller
+        Include Controller
+        Transaction Controller
+        Recording Controller
+       
+4. Listeners
+    Listeners是我非常喜欢的一个功能，她可以让你看到samplers测试的结果，形式多样，包括表格、图标、树状或者是日志文件中的简单文本。
+    在每次smaplers执行的时候，结果数据都会被收集在多样的Listeners中。 
+    Listeners可以加在test plan下的任何地方，JMeter提供的Listeners主要包含以下几种：
+      - Sample Result Save Configuration 
+      - Graph Full Results 
+      - Graph Results 
+      - Spline Visualizer 
+      - Assertion Results 
+      - View Results Tree 
+      - Aggregate Report 
+      - View Results in Table 
+      - Simple Data Writer 
+      - Monitor Results 
+      - Distribution Graph (alpha) 
+      - Aggregate Graph 
+      - Mailer Visualizer 
+      - BeanShell Listener 
+      - Summary Report
+      
+5. Timers
+    默认情况下，一个JMeter线程在sampler之间发送请求是不会暂停的。
+    有时候这可能不是你想要的。这时候你就可以加一个timer元素，你可以用她来在每个请求之间定义一个时间间隔。 
+    JMeter提供的Timers，如下：
+      - Constant Timer 
+      - Gaussian Random Timer 
+      - Uniform Random Timer 
+      - Constant Throughput Timer 
+      - Synchronizing Timer 
+      - JSR223 Timer 
+      - BeanShell Timer 
+      - BSF Timer 
+      - Poisson Random Timer
+      
+6. Assertions
+    Assertions，有点类似JUNIT里面的断言，她可以对请求中返回的结果做一些验证性的处理。
+    使用Assertions可以定制请求正确时返回的成功信息，也可以高亮返回的错误信息。 
+    JMeter提供的Assertions如下：
+      - Beanshell Assertion 
+      - BSF Assertion 
+      - Compare Assertion 
+      - JSR223 Assertion 
+      - Response Assertion 
+      - Duration Assertion 
+      - Size Assertion 
+      - XML Assertion 
+      - BeanShell Assertion 
+      - MD5Hex Assertion 
+      - HTML Assertion 
+      - XPath Assertion 
+      - XML Schema Assertion
+      
+7. 其他
+除了上面几个最重要的概念之外，还有几个概念，大家如果用到可以去官网翻翻文档，
+比如说Configuration Elements， Pre-processor Elements，Post-processor Elements， Execution Order of Test Elements ...
+
+
+
+
+
+创建第一个JMeter测试用例
+https://blog.csdn.net/u011541946/article/details/71037251
+
+在JMeter中，通常是以多线程或多进程的方式模拟用户行为来产生负载，所以，Thread Group可以理解为负载发生器。脚本中模拟用户的行为，叫用户运行器，
+通常用户运行器附加在线程或进程上。资源生成器，指用于生成测试过程中服务器，负载机的资源数据。报表生成器，根据测试的数据生成报表。
+这些概念，先了解下，以后慢慢会理解的。setUp和tearDown是不是很熟悉，如果你看了Python+Selenium系列文章中介绍unittest单元测试框架就应该明个这个意思。
+其实setUp就是写一些前提条件，tearDown用来写一些测试结束后的代码或者行为设置。
+
+
+一个HTTP Request,也就是常听说的web API测试，中文就是接口测试
+接口测试，用一句话概括就是，通过发送HTTP请求，检查响应内容是否正确。
+在View Results Tree里，通过人工肉眼去观察，response code： 200这样的字段。这个响应代码等于200就是个一个断言的根据。
+
+介绍在JMeter上如何使用断言：
+        https://blog.csdn.net/u011541946/article/details/71055629
+       
+        接口测试过程中，使用频率非常高的一个断言：Response Assertion。主要有响应状态码和响应时间，响应返回内容等
+        XML断言，有些操作返回的是XML格式数据，需要去XML格式数据进行解析，断言处理。
+        XPath断言，例如我知道根据这个XPath可以找到一个元素，这个在web自动化元素定位经常使用。
+    
+       -Duration Assertion和Size Assertion:
+             https://blog.csdn.net/u011541946/article/details/71055947
+       
+       View Results in Tables 介绍:
+            Sample # : 一个系列号，我们线程用户设置了5，这里就有5个号
+            Start Time:每个用户的开始时间，我们设置了1秒进5个用户，所以，每个用户进入时间不同，这里精确到毫秒。
+            Thread Name：线程名称，注意1-1,1-5，第一个1我也不知道表示什么，后面的1到5很好理解，就是用户1到用户5.
+            Label:就是Http reques的名称
+            Sampler Time:运行这个Sampler所消耗的时间，有时候也等于Duration time
+            Status:执行结果标记，成本绿勾，失败红叉。
+            Bytes:请求的响应文件大小
+            Sent Byte:发送HTTP请求的数据包大小
+            Latency：这个字面意思是潜伏时间，不是延迟，暂时不好理解和解释。一个网络术语。
+            Connet Time: 连接到服务器消耗的时间。
+            
+        View Results Tree 介绍:
+            Sampler result: 主要是一个Sampler测试的总体测试结果，里面的每个返回的参数和参数的值和View Reuslt in Table一样，多了响应状态码和响应消息这些字段。
+            Request:点击切换到Reuqest,主要实现显示这个HTTP 请求的一些信息
+            Response data:HTTP请求返回的Response的消息字段，一般是json格式或者xml，也有Html格式，这里默认是text格式。百度首页好像做了设置，返回的内容只有三行代码，应该不止，你可以试试其他网站。
+            
+        Aggregate Report介绍：
+            总数的报告。测试的最重要的是发现问题，同时，测试结果也需要保存，告诉其他人，你做了测试，所以测试报告很重要。
+        Summary Report, 这个和前面的Aggregate report很类似。.
+        
+        
+
+如何录制WebUI脚本
+        借助Badboy录制WebUI脚本，然后在Badboy的导出.jmx格式，然后用JMeter去打开这个脚本，进行相关的性能测试。
+        https://blog.csdn.net/u011541946/article/details/71070776
+        
+
+从命令行运行JMeter：https://blog.csdn.net/u011541946/article/details/71075197
+
+
+如何用JMeter做接口测试
+    https://blog.csdn.net/u011541946/article/details/71104167
+    接口测试，大致流程是: 拿到一个接口文档，分析好请求方式是什么，主要有POST和GET方法，请求URL是什么，
+    请求需要传入几个参数，参数的值是多少，检查请求响应的代码是什么，响应的内容有没有接口文档里描述的返回参数。
+    接口测试可以手工做，也可以自动化做，自动化做的难点就是如何去对响应列表进行断言。
+        
