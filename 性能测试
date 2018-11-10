@@ -184,4 +184,26 @@ https://blog.csdn.net/u011541946/article/details/71037251
     接口测试，大致流程是: 拿到一个接口文档，分析好请求方式是什么，主要有POST和GET方法，请求URL是什么，
     请求需要传入几个参数，参数的值是多少，检查请求响应的代码是什么，响应的内容有没有接口文档里描述的返回参数。
     接口测试可以手工做，也可以自动化做，自动化做的难点就是如何去对响应列表进行断言。
+
+
+输出HTML格式的性能测试报告：https://blog.csdn.net/u011541946/article/details/71126799
+        做性能测试，需要在GUI上设计好你的Test Plan，设置各种场景和负载值，包括多少个线程，多少个用户，循环多少次。
+        设置好了保存，然后用命令行去启动性能测试，查看相关测试结果。
+        
+        cmd 先要cd到jmeter的bin目录，然后输入以下命令：
+
+            jmeter -n -t F:\java\apache-jmeter-5.0\apache-jmeter-5.0\bin\ThreadGroup.jmx -l C:\Users\Administrator\Desktop\html.csv -e -o C:\Users\Administrator\Desktop\HttpReports
+
+            三个路径依次是：xxx.jmx文件路径，输出xxx.csv文件路径（html.csv empty），要保存的http report的文件路径（HttpReports empty）。
+            
+            
+安装插件管理：
+        下载插件的链接有所变化： 1）打开https://jmeter-plugins.org/install/Install/ ； 2）点击蓝字plugins-manager.jar即可下载。
+
+
+从csv文件读取变量（存放参数）：https://blog.csdn.net/u011541946/article/details/71155501
+                            通过 ${变量名}来告诉JMeter是从外部文件读取变量
+                            
+
+
         
